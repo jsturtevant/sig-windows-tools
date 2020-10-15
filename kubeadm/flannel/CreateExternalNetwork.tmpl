@@ -1,0 +1,28 @@
+ipmo C:\k\flannel\hns.psm1; 
+
+# https://github.com/kubernetes-sigs/sig-windows-tools/blob/1113abc0c516311f3bb650f9907f4a71f9f08141/kubeadm/KubeClusterHelper.psm1#L240
+function WaitForNetwork($NetworkName, $waitTimeSeconds = 60)
+{
+    $startTime = Get-Date
+
+    # Wait till the network is available
+    while ($true)
+    {
+        $timeElapsed = $(Get-Date) - $startTime
+        if ($($timeElapsed).TotalSeconds -ge $waitTimeSeconds)
+        {
+            throw "Fail to create the network[($NetworkName)] in $waitTimeSeconds seconds"
+        }
+        if ((Get-HnsNetwork | ? Name -EQ $NetworkName.ToLower()))
+        {
+            break;
+        }
+        Write-Host "Waiting for the Network ($NetworkName) to be created"
+        Start-Sleep 5
+    }
+}
+
+Write-Host "Creating network on adapter {{ .AdapterName }}"
+New-HNSNetwork -Type Overlay -AddressPrefix "192.168.255.0/30"-Gateway "192.168.255.1" -Name "External" -AdapterName "{{ .AdapterName }}" -SubnetPolicies @(@{Type = "VSID"; VSID = 9999; })
+WaitForNetwork("External")
+Get-HnsNetwork | select name 

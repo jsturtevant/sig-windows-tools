@@ -1,18 +1,32 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
+	"text/template"
 )
 
+type externalNetworkTemplate struct {
+	AdapterName string
+}
+
 func setupOverlay(interfaceName string) {
-	run(fmt.Sprintf(`ipmo C:\k\flannel\hns.psm1; New-HNSNetwork -Type Overlay -AddressPrefix "192.168.255.0/30"`+
-		`-Gateway "192.168.255.1" -Name "External" -AdapterName "%s" -SubnetPolicies @(@{Type = "VSID"; VSID = 9999; })`,
-		interfaceName),
-	)
+	i, _ := url.QueryUnescape(interfaceName)
+	externalNetworkTemplate := externalNetworkTemplate{AdapterName: i}
+	t := template.Must(template.ParseFiles("CreateExternalNetwork.tmpl"))
+
+	var templateBuffer bytes.Buffer
+	err := t.Execute(&templateBuffer, &externalNetworkTemplate)
+	if err != nil {
+		log.Fatalf("Error generating template: %v", err)
+	}
+
+	run(templateBuffer.String())
 }
 
 func setupL2bridge(interfaceName string) {
