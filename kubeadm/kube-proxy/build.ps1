@@ -1,5 +1,5 @@
 param(
-    [string]$image = "sigwindowstools/kube-proxy",
+    [string]$image = "jsturtevant/kube-proxy",
     [switch]$push,
     [version]$minVersion = "1.17.0"
 )

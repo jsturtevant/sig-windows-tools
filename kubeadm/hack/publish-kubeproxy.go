@@ -18,7 +18,7 @@ const (
 func dockerBuild(v *semver.Version, dockerfilePath string) error {
 	cmd := exec.Command("docker", "build", "--pull",
 		fmt.Sprintf("--build-arg=k8sVersion=v%s", v.String()),
-		fmt.Sprintf("--tag=sigwindowstools/kube-proxy:v%s", v.String()),
+		fmt.Sprintf("--tag=jsturtevant/kube-proxy:v%s", v.String()),
 		dockerfilePath,
 	)
 	cmd.Stdout = os.Stdout
@@ -27,7 +27,7 @@ func dockerBuild(v *semver.Version, dockerfilePath string) error {
 }
 
 func dockerPush() error {
-	cmd := exec.Command("docker", "push", "sigwindowstools/kube-proxy")
+	cmd := exec.Command("docker", "push", "jsturtevant/kube-proxy")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
