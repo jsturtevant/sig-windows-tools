@@ -1,6 +1,6 @@
 param(
     [switch] $push, 
-    [string] $image = "sigwindowstools/flannel",
+    [string] $image = "jsturtevant/flannel-host",
     [string] $tagSuffix = ""
 )
 
