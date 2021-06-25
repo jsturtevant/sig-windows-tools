@@ -60,6 +60,9 @@ metadata:
     tier: node
     app: flannel
   namespace: kube-system
+  annotations:
+    microsoft.com/hostprocess-inherit-user: "true"
+    microsoft.com/hostprocess-container: "true"
 spec:
   selector:
     matchLabels:
