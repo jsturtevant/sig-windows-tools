@@ -70,8 +70,8 @@ spec:
         tier: node
         app: flannel
       annotations:
-        microsoft.com/hostprocess-inherit-user: "true"
-        microsoft.com/hostprocess-container: "true"
+        microsoft.com/hostprocess-inherit-user: true
+        microsoft.com/hostprocess-container: true
     spec:
       affinity:
         nodeAffinity:
