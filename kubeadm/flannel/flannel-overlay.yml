@@ -87,10 +87,6 @@ spec:
                     values:
                       - amd64
       hostNetwork: true
-      securityContext:
-        windowsOptions:
-          hostProcess: true
-          runAsUserName: "NT AUTHORITY\\Local service"
       serviceAccountName: flannel
       tolerations:
       - operator: Exists
