@@ -99,7 +99,7 @@ spec:
         operator: Exists
       containers:
       - name: kube-flannel
-        image: sigwindowstools/flannel:v0.13.0-nanoserver
+        image: jsturtevant/flannel-tools:v0.13.0-1809-v0.1.5-hostprocess
         volumeMounts:
         - name: flannel-windows-cfg
           mountPath: /etc/kube-flannel-windows/
