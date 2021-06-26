@@ -69,9 +69,6 @@ spec:
       labels:
         tier: node
         app: flannel
-      annotations:
-        "microsoft.com/hostprocess-inherit-user": "true"
-        "microsoft.com/hostprocess-container": "true"
     spec:
       affinity:
         nodeAffinity:
@@ -86,6 +83,10 @@ spec:
                     operator: In
                     values:
                       - amd64
+      securityContext:
+        windowsOptions:
+          hostProcess: true
+          runAsUserName: "NT AUTHORITY\\Local service"
       hostNetwork: true
       serviceAccountName: flannel
       tolerations:
