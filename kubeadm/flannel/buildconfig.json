@@ -2,7 +2,7 @@
     "flannel": [
         "0.13.0"
     ],
-    "baseimage": "mcr.microsoft.com/powershell",
+    "baseimage": "mcr.microsoft.com/windows/nanoserver",
     "tagsMap":[
         {"source":"nanoserver-1809","target":"1809"}
     ]

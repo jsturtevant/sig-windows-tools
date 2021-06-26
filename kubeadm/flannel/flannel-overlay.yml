@@ -100,6 +100,7 @@ spec:
       containers:
       - name: kube-flannel
         image: jsturtevant/flannel-tools:v0.13.0-1809-v0.1.5-hostprocess
+        imagePullPolicy: Always
         volumeMounts:
         - name: flannel-windows-cfg
           mountPath: /etc/kube-flannel-windows/
