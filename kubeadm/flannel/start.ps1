@@ -11,7 +11,7 @@ if ($network -eq $null) {
 
 Set-Content -Path /etc/cni/net.d/10-flannel.conf -value "test"
 
-& flanneld.exe --kube-subnet-mgr --kubeconfig-file /etc/flannel/kubeconfig.yml
+& flanneld.exe --kube-subnet-mgr --kubeconfig-file /k/kubeconfig.yml
 
 # configure cni
 # $cniJson = get-content /etc/kube-flannel-windows/cni-conf.json | ConvertFrom-Json

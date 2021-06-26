@@ -103,8 +103,8 @@ spec:
         volumeMounts:
         - name: flannel-windows-cfg
           mountPath: /etc/kube-flannel-windows/
-        - name: kubeadm-config
-          mountPath: /etc/kubeadm-config/
+        # - name: kubeadm-config
+        #   mountPath: /etc/kubeadm-config/
         env:
         - name: POD_NAME
           valueFrom:
@@ -120,6 +120,6 @@ spec:
       - name: flannel-windows-cfg
         configMap:
           name: kube-flannel-windows-cfg
-      - name: kubeadm-config
-        configMap:
-          name: kubeadm-config
+      # - name: kubeadm-config
+      #   configMap:
+      #     name: kubeadm-config
