@@ -4,6 +4,6 @@
     ],
     "baseimage": "mcr.microsoft.com/windows/nanoserver",
     "tagsMap":[
-        {"source":"nanoserver-1809","target":"1809"}
+        {"source":"1809","target":"1809"}
     ]
 }

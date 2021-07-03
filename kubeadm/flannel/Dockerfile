@@ -1,7 +1,7 @@
 # note this image doesn't really mater for hostprocess
 ARG BASE="mcr.microsoft.com/windows/nanoserver"
 ARG cniVersion="0.8.7"
-ARG flannelVersion="0.13.0"
+ARG flannelVersion="0.14.0"
 
 FROM --platform=linux/amd64 curlimages/curl as bins
 ARG cniVersion
@@ -28,4 +28,4 @@ COPY start.ps1 /flannel/start.ps1
 ADD https://raw.githubusercontent.com/microsoft/SDN/master/Kubernetes/windows/hns.psm1 /flannel/hns.psm1
 COPY --from=bins /flannel/flanneld.exe /flannel/flanneld.exe
 
-ENTRYPOINT ["PowerShell", "/c", "/flannel/start.ps1"]
+ENTRYPOINT ["PowerShell", "/c", "$env:CONTAINER_SANDBOX_MOUNT_POINT/flannel/start.ps1"]
