@@ -102,10 +102,14 @@ spec:
         image: jsturtevant/flannel-tools:v0.14.0-1809-hostprocess
         imagePullPolicy: Always
         volumeMounts:
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
         - name: flannel-windows-cfg
           mountPath: /etc/kube-flannel-windows/
         - name: kubeadm-config
           mountPath: /etc/kubeadm-config/
+        - name: kube-proxy
+          mountPath: /flannel-config-file
         env:
         - name: POD_NAME
           valueFrom:
@@ -118,6 +122,12 @@ spec:
               apiVersion: v1
               fieldPath: metadata.namespace
       volumes:
+      - name: kube-proxy
+        configMap:
+          name: kube-proxy
+      - name: flannel-cfg
+        configMap:
+          name: kube-flannel-cfg
       - name: flannel-windows-cfg
         configMap:
           name: kube-flannel-windows-cfg
