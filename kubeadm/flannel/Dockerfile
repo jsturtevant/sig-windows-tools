@@ -1,19 +1,17 @@
 # note this image doesn't really mater for hostprocess
 ARG BASE="mcr.microsoft.com/windows/nanoserver"
-ARG cniVersion="0.8.7"
-ARG flannelVersion="0.14.0"
+ARG cniVersion="0.2.0"
+ARG flannelVersion="0.13.0"
 
 FROM --platform=linux/amd64 curlimages/curl as bins
 ARG cniVersion
 ARG flannelVersion
 
 WORKDIR /cni
-RUN curl -Lo cni.tgz https://github.com/containernetworking/plugins/releases/download/v${cniVersion}/cni-plugins-windows-amd64-v${cniVersion}.tgz
-RUN tar -xf cni.tgz
-RUN rm cni.tgz
+RUN curl -Lo cni.zip https://github.com/microsoft/windows-container-networking/releases/download/v${cniVersion}/windows-container-networking-cni-amd64-v${cniVersion}.zip
 
 WORKDIR /flannel 
-RUN curl -Lo flanneld.exe https://github.com/coreos/flannel/releases/download/v${flannelVersion}/flanneld.exe
+RUN curl -Lo flanneld.exe https://testgridjs.blob.core.windows.net/containerd/flanneld.exe
 
 FROM $BASE
 
