@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+image="jsturtevant/busybox:1.29"
+namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+nodename="capz-conf-6z8jc"
+
+overrides=$(cat <<-JSON
+{
+  "spec": {
+    "nodeName": "$nodename",
+    "nodeSelector": {
+      "kubernetes.io/os": "windows"
+    },
+    "hostNetwork": true,
+    "securityContext": {
+      "windowsOptions": {
+        "hostProcess": true,
+        "runAsUserName": "NT AUTHORITY\\\\SYSTEM"
+      }
+    }
+  }
+}
+JSON
+)
+
+kubectl run windows-debug-${RANDOM} -it --rm -n $namespace --image $image --image-pull-policy=IfNotPresent --restart=Never --overrides "$overrides" --command -- powershell
