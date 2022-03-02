@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 image="jsturtevant/dev-tools:latest"
-nodename="capz-conf-6z8jc"
+nodename="$1"
 
 # sometime ns default is empty from this command so default if it is
 namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}')
