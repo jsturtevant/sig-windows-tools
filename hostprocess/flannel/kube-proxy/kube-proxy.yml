@@ -21,7 +21,7 @@ spec:
           runAsUserName: "NT AUTHORITY\\system"
       hostNetwork: true
       containers:
-      - image: sigwindowstools/kube-proxy:v1.24.3-flannel-hostprocess
+      - image: jsturtevant/kube-proxy:v1.25.4-flannel-hostprocess
         name: kube-proxy
         imagePullPolicy: Always
         env:
