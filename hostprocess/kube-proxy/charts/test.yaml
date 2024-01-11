@@ -1,0 +1,64 @@
+---
+# Source: kube-proxy/templates/DaemonSet.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-proxy-windows
+  labels:
+    k8s-app: kube-proxy-windows
+    helm.sh/chart: kube-proxy-0.1.0
+    app.kubernetes.io/name: kube-proxy-windows
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kube-proxy-windows
+      app.kubernetes.io/name: kube-proxy-windows
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        k8s-app: kube-proxy-windows
+        app.kubernetes.io/name: kube-proxy-windows
+        app.kubernetes.io/instance: release-name
+    spec:
+      serviceAccountName: kube-proxy
+      securityContext:
+        windowsOptions:
+          hostProcess: true
+          runAsUserName: "NT AUTHORITY\\system"
+      hostNetwork: true
+      containers:
+        - name: kube-proxy
+          image: "jsturtevant:latest"
+          imagePullPolicy: Always
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+          - mountPath: /var/lib/kube-proxy
+            name: kube-proxy
+          resources:
+            {}
+      nodeSelector:
+        kubernetes.io/os: windows
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - operator: Exists
+      volumes:
+      - configMap:
+          name: kube-proxy
+        name: kube-proxy
+  updateStrategy:
+    type: RollingUpdate
