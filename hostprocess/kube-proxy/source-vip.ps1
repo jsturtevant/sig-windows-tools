@@ -1,5 +1,6 @@
 $ErrorActionPreference = "Stop";
 
+ls
 ipmo -Force .\hns.psm1
 $NetworkName = "Calico"
 Write-Host "Waiting for HNS network $NetworkName to be created..."
@@ -21,8 +22,7 @@ if ($network.Type -EQ "Overlay") {
     $argList += "--source-vip=$sourceVip"
 
     Write-Host "Found sourceip: $sourceVip"
-    echo $sourceVip > c:/sourcevip/sourcevip.txt
-    write-host "sourceip written to c:/sourcevip/sourcevip.txt"
+    [Environment]::SetEnvironmentVariable('SOURCE_VIP', $sourceVip, 'Machine')
 }else {
     Write-Host "Not a VXLAN network, skipping sourceip"
 }

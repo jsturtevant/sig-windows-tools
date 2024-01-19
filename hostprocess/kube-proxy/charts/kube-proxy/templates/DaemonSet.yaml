@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: kube-proxy-windows
+  name: {{ include "kube-proxy.name" . }}
   labels:
-    k8s-app: kube-proxy-windows
+    k8s-app: {{ include "kube-proxy.name" . }}
     {{- include "kube-proxy.labels" . | nindent 4 }}
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
     matchLabels:
-      k8s-app: kube-proxy-windows
+      k8s-app: {{ include "kube-proxy.name" . }}
       {{- include "kube-proxy.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -18,14 +18,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        k8s-app: kube-proxy-windows
+        k8s-app: {{ include "kube-proxy.name" . }}
         {{- include "kube-proxy.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: kube-proxy
+      serviceAccountName: {{ .Values.serviceAccount }}
       securityContext:
         windowsOptions:
           hostProcess: true
@@ -35,20 +35,23 @@ spec:
       - name: setup-source-vip
         image: {{ .Values.sourcevipImage.repository }}:{{ .Values.sourcevipImage.tag }}
         imagePullPolicy: {{ .Values.sourcevipImage.pullPolicy }}
-        command: ["/source-vip"]
-        volumeMounts:
-        - name: source-vip
-          mountPath: "/source-vip"
+        securityContext:
+            windowsOptions:
+              hostProcess: true
+              runAsUserName: "NT AUTHORITY\\system"
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          #command: ["powershell /c c:/hpc/kube-proxy/start.ps1"]
           args:
           - --hostname-override=$(NODE_NAME)
-          - --config=/var/lib/kube-proxy/kubeconfig.conf
+          #- --kubeconfig=c:/var/lib/kube-proxy/kubeconfig.conf
           - --v=4
           - --proxy-mode=kernelspace
-          - --feature-gates=WinOverlay=true
+          - --feature-gates=WinDSR=true,WinOverlay=true
+          - --source-vip=%SOURCE_VIP%
+          - --enable-dsr=true
           env:
             - name: NODE_NAME
               valueFrom:
@@ -59,11 +62,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: KUBE_NETWORK
+              value: Calico
+            - name: KUBERNETES_SERVICE_HOST
+              value: win-21978-e4dfdc64.eastus.cloudapp.azure.com
+            - name: KUBERNETES_SERVICE_PORT
+              value: "6443"
           volumeMounts:
           - mountPath: /var/lib/kube-proxy
             name: kube-proxy
-          - name: source-vip
-            mountPath: "/source-vip"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       nodeSelector:
@@ -86,7 +93,5 @@ spec:
       - configMap:
           name: kube-proxy
         name: kube-proxy
-      - name: source-vip
-        emptyDir: {}
   updateStrategy:
     type: RollingUpdate

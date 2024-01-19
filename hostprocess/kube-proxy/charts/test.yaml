@@ -33,22 +33,25 @@ spec:
       hostNetwork: true
       initContainers:
       - name: setup-source-vip
-        image: jsturtevant:latest
+        image: jsturtevant/sourcevip:latest
         imagePullPolicy: Always
-        command: ["/source-vip"]
-        volumeMounts:
-        - name: source-vip
-          mountPath: "/source-vip"
+        securityContext:
+            windowsOptions:
+              hostProcess: true
+              runAsUserName: "NT AUTHORITY\\system"
       containers:
         - name: kube-proxy
-          image: "jsturtevant:latest"
+          image: jsturtevant/kube-proxy-test:latest
           imagePullPolicy: Always
+          #command: ["powershell /c c:/hpc/kube-proxy/start.ps1"]
           args:
           - --hostname-override=$(NODE_NAME)
-          - --config=/var/lib/kube-proxy/kubeconfig.conf
+          #- --kubeconfig=c:/var/lib/kube-proxy/kubeconfig.conf
           - --v=4
           - --proxy-mode=kernelspace
-          - --feature-gates=WinOverlay=true
+          - --feature-gates=WinDSR=true,WinOverlay=true
+          - --source-vip=%SOURCE_VIP%
+          - --enable-dsr=true
           env:
             - name: NODE_NAME
               valueFrom:
@@ -59,11 +62,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: KUBE_NETWORK
+              value: Calico
+            - name: KUBERNETES_SERVICE_HOST
+              value: win-21978-e4dfdc64.eastus.cloudapp.azure.com
+            - name: KUBERNETES_SERVICE_PORT
+              value: "6443"
           volumeMounts:
           - mountPath: /var/lib/kube-proxy
             name: kube-proxy
-          - name: source-vip
-            mountPath: "/source-vip"
           resources:
             {}
       nodeSelector:
@@ -76,7 +83,5 @@ spec:
       - configMap:
           name: kube-proxy
         name: kube-proxy
-      - name: source-vip
-        emptyDir: {}
   updateStrategy:
     type: RollingUpdate

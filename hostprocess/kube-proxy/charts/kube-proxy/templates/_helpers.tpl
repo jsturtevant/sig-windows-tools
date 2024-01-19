@@ -1,3 +1,9 @@
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "kube-proxy.name" -}}
+{{- default "kube-proxy-windows" .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
