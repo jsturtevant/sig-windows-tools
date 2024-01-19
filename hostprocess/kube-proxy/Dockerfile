@@ -11,6 +11,5 @@ FROM $BASE
 ENV PATH="C:\Windows\system32;C:\Windows;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;"
 
 COPY --from=bins /kube-proxy/kube-proxy.exe /kube-proxy/kube-proxy.exe
-COPY start.ps1 /kube-proxy/start.ps1
 
 ENTRYPOINT ["c:/hpc/kube-proxy/kube-proxy.exe"]
