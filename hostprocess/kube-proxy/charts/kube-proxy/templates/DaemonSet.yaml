@@ -31,10 +31,24 @@ spec:
           hostProcess: true
           runAsUserName: "{{ .Values.securityContext.runAsUserName }}"
       hostNetwork: true
+      initContainers:
+      - name: setup-source-vip
+        image: {{ .Values.sourcevipImage.repository }}:{{ .Values.sourcevipImage.tag }}
+        imagePullPolicy: {{ .Values.sourcevipImage.pullPolicy }}
+        command: ["/source-vip"]
+        volumeMounts:
+        - name: source-vip
+          mountPath: "/source-vip"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+          - --hostname-override=$(NODE_NAME)
+          - --config=/var/lib/kube-proxy/kubeconfig.conf
+          - --v=4
+          - --proxy-mode=kernelspace
+          - --feature-gates=WinOverlay=true
           env:
             - name: NODE_NAME
               valueFrom:
@@ -48,6 +62,8 @@ spec:
           volumeMounts:
           - mountPath: /var/lib/kube-proxy
             name: kube-proxy
+          - name: source-vip
+            mountPath: "/source-vip"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       nodeSelector:
@@ -70,5 +86,7 @@ spec:
       - configMap:
           name: kube-proxy
         name: kube-proxy
+      - name: source-vip
+        emptyDir: {}
   updateStrategy:
     type: RollingUpdate

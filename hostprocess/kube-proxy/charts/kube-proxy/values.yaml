@@ -5,7 +5,6 @@
 image:
   repository: jsturtevant
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
 imagePullSecrets: []
@@ -14,6 +13,11 @@ podAnnotations: {}
 
 securityContext: 
   runAsUserName: NT AUTHORITY\\system
+
+sourcevipImage:
+  repository: jsturtevant
+  pullPolicy: Always
+  tag: "latest"
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
