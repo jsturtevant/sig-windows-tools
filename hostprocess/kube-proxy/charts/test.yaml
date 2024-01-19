@@ -46,7 +46,7 @@ spec:
           #command: ["powershell /c c:/hpc/kube-proxy/start.ps1"]
           args:
           - --hostname-override=$(NODE_NAME)
-          #- --kubeconfig=c:/var/lib/kube-proxy/kubeconfig.conf
+          - --kubeconfig=c:/kubeconfig.conf
           - --v=4
           - --proxy-mode=kernelspace
           - --feature-gates=WinDSR=true,WinOverlay=true
@@ -64,13 +64,10 @@ spec:
                   fieldPath: status.podIP
             - name: KUBE_NETWORK
               value: Calico
-            - name: KUBERNETES_SERVICE_HOST
-              value: win-21978-e4dfdc64.eastus.cloudapp.azure.com
-            - name: KUBERNETES_SERVICE_PORT
-              value: "6443"
           volumeMounts:
-          - mountPath: /var/lib/kube-proxy
+          - mountPath: /kubeconfig.conf
             name: kube-proxy
+            subPath: kubeconfig.conf
           resources:
             {}
       nodeSelector:
