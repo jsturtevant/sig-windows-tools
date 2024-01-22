@@ -11,17 +11,25 @@ image:
 namespace: kube-system
 serviceAccount: kube-proxy
 
-imagePullSecrets: []
-
-podAnnotations: {}
-
 securityContext: 
   runAsUserName: NT AUTHORITY\\system
 
+loglevel: 4
+
+cni:
+  WinOverlay: true
+  
 sourcevipImage:
   repository: jsturtevant/sourcevip
   pullPolicy: Always
   tag: "latest"
+  provider: calico
+  securityContext:
+    runAsUserName: NT AUTHORITY\\system
+
+imagePullSecrets: []
+
+podAnnotations: {}
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

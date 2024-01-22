@@ -35,6 +35,7 @@ spec:
       - name: setup-source-vip
         image: jsturtevant/sourcevip:latest
         imagePullPolicy: Always
+        args: ["calico"]
         securityContext:
             windowsOptions:
               hostProcess: true
@@ -43,15 +44,14 @@ spec:
         - name: kube-proxy
           image: jsturtevant/kube-proxy-test:latest
           imagePullPolicy: Always
-          #command: ["powershell /c c:/hpc/kube-proxy/start.ps1"]
           args:
           - --hostname-override=$(NODE_NAME)
           - --kubeconfig=c:/kubeconfig.conf
           - --v=4
           - --proxy-mode=kernelspace
+          - --enable-dsr=true
           - --feature-gates=WinDSR=true,WinOverlay=true
           - --source-vip=%SOURCE_VIP%
-          - --enable-dsr=true
           env:
             - name: NODE_NAME
               valueFrom:
